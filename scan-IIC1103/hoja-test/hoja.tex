@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{fullpage}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage[pdftex]{graphicx}
+\usepackage{amsmath}
+\usepackage{epsfig}
+\usepackage{multicol}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{minted}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\noindent\begin{tabular}{ll|}
+\includegraphics[height=56pt]{puclogo-bw.pdf}
+&
+\fbox{
+  \begin{minipage}[b]{8cm}
+    \noindent\textsc{Pontificia Universidad Católica de Chile\\
+    Escuela de Ingeniería\\
+    Departamento de Ciencia de la Computación\\
+    IIC1103 - Introducción a la Programación}
+    \\
+  \end{minipage}
+}
+\end{tabular}
+\fbox{
+\begin{minipage}[c]{7cm}
+  \begin{center}
+    Número de Alumno
+  \end{center}
+  \vspace{-0.5em}
+  \resizebox{7cm}{0.5cm}{ \\
+  \begin{tabular}{p{0.1cm}|p{1em}|p{1em}|p{1em}|p{1em}|p{1em}|p{1em}|p{1em}|p{1em}|p{0.1cm}} \hline
+    \cellcolor{black} &   &   &   &   &   &   &   &   & \cellcolor{black} \\ \hline
+  \end{tabular}
+  }
+  
+%  \begin{tabular}{ccc}
+%    Sección & Pregunta & Puntaje \\
+%    \resizebox{0.7cm}{0.4cm}{\framebox[1em]{}} & \resizebox{0.7cm}{0.4cm}{\framebox[1em]{}} & \resizebox{0.7cm}{0.4cm}{\framebox[1em]{}}\resizebox{0.7cm}{0.4cm}{\framebox[1em]{}}
+%  \end{tabular}
+
+  \begin{tabular}{ccc}
+    Sección & Pregunta & Puntaje \\
+    \resizebox{0.7cm}{0.5cm}{\begin{tabular}{|p{1em}|}\hline \\ \hline \end{tabular}} & 
+    \resizebox{0.7cm}{0.5cm}{\begin{tabular}{|p{1em}|}\hline \\ \hline \end{tabular}} & 
+    \resizebox{1.4cm}{0.5cm}{\begin{tabular}{|p{1em}|p{1em}|}\hline & \\ \hline \end{tabular}} \\
+  \end{tabular}
+
+\end{minipage}
+}
+
+
+
+
+ \renewcommand{\theenumii}{\theenumi.\arabic{enumii}}
+ \renewcommand{\thesubsection}{\arabic{subsection}}
+ \renewcommand{\theenumiii}{\alph{enumiii}}
+
+
+ \setlength{\parskip}{0pt}
+ \setlength{\itemsep}{0pt}
+ \setlength{\topsep}{0pt}
+ \setlength{\partopsep}{0pt}
+ \setlength{\itemsep}{0pt}
+
+ \begin{center}
+ \large IIC 1103 --- Introducción a la Programación \\
+ \textbf{Interrogación 1} \\
+ \end{center}
+
+% \vspace{2em}
+
+ \begin{flushright}
+   Miércoles 07-Abril-2015
+ \end{flushright}
+
+% {\bf Duración:} 2 horas
+
+ \begin{tabular}{ | l | l | l | p{5cm} |}
+   \hline
+   Day & Min Temp & Max Temp & Summary \\ \hline
+   Monday & 11C & 22C & A clear day with lots of sunshine.  
+   However, the strong breeze will bring down the temperatures. \\ \hline
+   Tuesday & 9C & 19C & Cloudy with rain, across many northern regions. Clear spells 
+   across most of Scotland and Northern Ireland, 
+   but rain reaching the far northwest. \\ \hline
+   Wednesday & 10C & 21C & Rain will still linger for the morning. 
+   Conditions will improve by early afternoon and continue 
+   throughout the evening. \\
+   \hline
+   \end{tabular}
+   
+   
+   \begin{table}[h] \resizebox{1.4\textwidth}{!}{\begin{minipage}{\textwidth} \begin{tabular}{r|c|c|} & \multicolumn{1}{c}{noninteractive} & \multicolumn{1}{c}{interactive} \\ \cline{2-3} massively multiple & Library & University \\ \cline{2-3} one-to-one & Book & Tutor \\ \cline{2-3} \end{tabular} \caption[Table caption text]{Table taken from \cite[p.10]{refid} } \label{table:name} \end{minipage} } \end{table}
+% \begin{enumerate}
+  
+% \end{enumerate}
+  
+\end{document}
