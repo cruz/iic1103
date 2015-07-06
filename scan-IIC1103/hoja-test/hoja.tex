@@ -10,15 +10,20 @@
 \usepackage{times}
 \usepackage{hyperref}
 \usepackage{minted}
+\usepackage{tikz}
 
 \pagestyle{empty}
 
+\newcommand\crule[3][black]{\textcolor{#1}{\rule{#2}{#3}}}
+
+
+
 \begin{document}
 
-\noindent\begin{tabular}{ll|}
+\noindent\begin{tabular}{ll}
 \includegraphics[height=56pt]{puclogo-bw.pdf}
 &
-\fbox{
+%\fbox{
   \begin{minipage}[b]{8cm}
     \noindent\textsc{Pontificia Universidad Católica de Chile\\
     Escuela de Ingeniería\\
@@ -26,34 +31,37 @@
     IIC1103 - Introducción a la Programación}
     \\
   \end{minipage}
-}
+%}
 \end{tabular}
-\fbox{
+%\fbox{
 \begin{minipage}[c]{7cm}
   \begin{center}
     Número de Alumno
   \end{center}
   \vspace{-0.5em}
-  \resizebox{7cm}{0.5cm}{ \\
-  \begin{tabular}{p{0.1cm}|p{1em}|p{1em}|p{1em}|p{1em}|p{1em}|p{1em}|p{1em}|p{1em}|p{0.1cm}} \hline
-    \cellcolor{black} &   &   &   &   &   &   &   &   & \cellcolor{black} \\ \hline
-  \end{tabular}
+    
+  \tikz{
+     \draw[step=0.7](0,0) grid(7, 0.7);
+     \fill[black](0,0) rectangle(0.7, 0.7);
+	 \fill[black](6.3,0.0)rectangle(7,0.7);
   }
-  
-%  \begin{tabular}{ccc}
-%    Sección & Pregunta & Puntaje \\
-%    \resizebox{0.7cm}{0.4cm}{\framebox[1em]{}} & \resizebox{0.7cm}{0.4cm}{\framebox[1em]{}} & \resizebox{0.7cm}{0.4cm}{\framebox[1em]{}}\resizebox{0.7cm}{0.4cm}{\framebox[1em]{}}
-%  \end{tabular}
+    
 
-  \begin{tabular}{ccc}
-    Sección & Pregunta & Puntaje \\
-    \resizebox{0.7cm}{0.5cm}{\begin{tabular}{|p{1em}|}\hline \\ \hline \end{tabular}} & 
-    \resizebox{0.7cm}{0.5cm}{\begin{tabular}{|p{1em}|}\hline \\ \hline \end{tabular}} & 
-    \resizebox{1.4cm}{0.5cm}{\begin{tabular}{|p{1em}|p{1em}|}\hline & \\ \hline \end{tabular}} \\
+  \begin{tabular}{llrr}
+    \phantom{m}Sección & Pregunta & Puntaje & \phantom{mm}Ayudante \\
   \end{tabular}
 
+  \tikz{
+     \draw[white](0,0)rectangle(0.7,0.7);
+     \draw(0.7,0)rectangle(1.4,0.7);
+     \draw(2.1,0)rectangle(2.8,0.7);
+     \draw(3.5,0)rectangle(4.2,0.7);
+     \draw(4.2,0)rectangle(4.9,0.7);
+     \draw(5.6,0)rectangle(6.3,0.7);
+     \draw(6.3,0)rectangle(7,0.7);
+  }
 \end{minipage}
-}
+%}
 
 
 
