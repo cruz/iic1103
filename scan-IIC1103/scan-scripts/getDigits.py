@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import os
 import os.path
+from operator import itemgetter
 
 HOME_DIR="/user/cruz/git/iic1103"
 INPUT_DIR=HOME_DIR+"/scan-IIC1103/input-test"
@@ -72,19 +73,37 @@ def extractDigits(baseName,debug=False):
 		cnt = cv2.approxPolyDP(cnt, 0.02*cnt_len, True)
 		if(len(cnt) == 4 and cv2.contourArea(cnt) > AREA_THRESHOLD_MIN and cv2.contourArea(cnt) < AREA_THRESHOLD_MAX and cv2.isContourConvex(cnt)):
 			x,y,w,h = cv2.boundingRect(cnt)
+			#check if it is square
+			sidesDiff = abs(w-h)
 			cnt = cnt.reshape(-1,2)
+			#compute rotation of contour
 			max_cos = np.max([angle_cos( cnt[i], cnt[(i+1)%4], cnt[(i+2)%4]) for i in xrange(4)])
-			if max_cos < 0.1:
+			if max_cos < 0.1 and sidesDiff < 20:
 				squareArea = cv2.contourArea(cnt)
 				print "square " + str(nSquare) + ", " + str(squareArea) + ", rect: " + str(x)+","+str(y)+","+str(w)+","+str(h)+ ", area " + str(w*h)
 				squares.append(cnt)
 				#extract cut
-				rect = image_corner[y:y+h,x:x+w]
-				cv2.imwrite(TEMP_DIR+"/"+baseName+"-"+str(nSquare)+".png", rect)
+				#rect = image_corner[y:y+h,x:x+w]
+				rects.append((x,y,w,h))
+				#cv2.imwrite(TEMP_DIR+"/"+baseName+"-"+str(nSquare)+".png", rect)
 				nSquare += 1
 
 	#display squares
 	print "Found " + str(len(squares)) + " squares"
+
+	nRect = 0
+	rects = sorted(rects, key=(itemgetter(0,1)))
+	for rect in rects:
+		#extract cut
+		x,y,w,h = rect
+		cut = image_corner[y:y+h,x:x+w]
+		print "rect " + str(nRect) + ", " + str(rect)
+		cv2.imwrite(TEMP_DIR+"/"+baseName+"-"+str(nRect)+".png", cut)
+		#TODO identify digit
+		digit = recognizeDigit(cut)
+		print "Read digit: " + str(digit)
+		nRect += 1
+				
 
 	cv2.drawContours(image_corner, squares, -1, (0,255,0), 3)
 	cv2.imwrite(TEMP_DIR+"/"+baseName+"-corner-squares"+".png", image_corner)
@@ -107,7 +126,18 @@ def extractDigits(baseName,debug=False):
 		#	break
 		cv2.destroyAllWindows()
 
+	#TODO sort rects
 
+	nRect = 0
+	#for rect in rects:
+	#	cv2.imshow('rect' + str(nRect), rect)
+	#	ch = 0xFF & cv2.waitKey()
+
+
+
+def recognizeDigit(rect):
+
+	return -1
 
 def main():
 	cleanTmpDir()
