@@ -23,13 +23,15 @@ to the black square.
 TODO: Sort the squares according to their position in the image
 
 ### Training classifier
-`train-mnist.py` trains a LinearSVM using the MINST training data. If the dataset
+`train-mnist.py` trains a LinearSVM using the MNIST training data. If the dataset
 is not locally available, it is downloaded (but this happens only the first time).
 The resulting classifier model is stored as `digits_cls.pkl`
 
 ```
 python train-mnist.py train
 ```
+
+TODO: Maybe it's not the best classifier, but gives reasonable results, and can be improved later.
 
 ### Reading digits
 `train-mnist.py` uses the trained model to identify digits on all files ending as `*-cut.png`.
