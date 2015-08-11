@@ -13,10 +13,10 @@ import sys
 import glob
 
 #HOME_DIR="/user/cruz/git/iic1103/"
-#INPUT_DIR="/user/cruz/git/iic1103/scan-IIC1103/opt/numbers"
-INPUT_DIR="/opt/numbers/cropped_imgs"
-#OUTPUT_DIR="/user/cruz/git/iic1103/scan-IIC1103/output"
-OUTPUT_DIR="/opt/numbers/raw_output"
+INPUT_DIR="/user/cruz/git/iic1103/scan-IIC1103/opt/numbers/cropped_imgs"
+#INPUT_DIR="/opt/numbers/cropped_imgs"
+OUTPUT_DIR="/user/cruz/git/iic1103/scan-IIC1103/output"
+#OUTPUT_DIR="/opt/numbers/raw_output"
 MODEL_FILE="digits_cls.pkl"
 OUTPUT_FILE=OUTPUT_DIR+"/output.txt"
 
