@@ -1,16 +1,17 @@
 import sklearn
 from sklearn.externals import joblib
-from sklearn import datasets
 from skimage.feature import hog
 from sklearn.svm import LinearSVC
-import numpy as np
-import time
+from sklearn import datasets
 
+import numpy as np
+
+import time
 import cv2
 import sys
 
-HOME_DIR="/user/cruz/git/iic1103/"
-TRAIN_DIR="/user/cruz/git/iicc103/scan-IIC1103/train-data"
+#TRAIN_DIR="/user/cruz/git/iic1103/scan-IIC1103/train-data"
+TRAIN_DIR="./train-data"
 TRAIN_MAT=TRAIN_DIR+"/mldata/mnist-original.mat"
 
 MODEL_FILE="digits_cls.pkl"
