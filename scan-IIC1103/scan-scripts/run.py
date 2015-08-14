@@ -1,8 +1,10 @@
-import sklearn
-from sklearn.externals import joblib
-from sklearn import datasets
-from skimage.feature import hog
-from sklearn.svm import LinearSVC
+#import sklearn
+#from sklearn.externals import joblib
+#from sklearn import datasets
+#from skimage.feature import hog
+#from sklearn.svm import LinearSVC
+import caffe
+
 import numpy as np
 import time
 
@@ -12,12 +14,17 @@ import os
 import sys
 import glob
 
+
+MODEL_FILE = "/user/cruz/git/caffe/examples/mnist/lenet.prototxt"
+PRETRAINED = "/user/cruz/git/caffe/examples/mnist/lenet_iter_10000.caffemodel"
+net = caffe.Net(MODEL_FILE, PRETRAINED,caffe.TEST)
+TEST_IMG = "/user/cruz/git/iic1103/scan-IIC1103/opt/numbers/cut-numbers/0-3.png"
 #HOME_DIR="/user/cruz/git/iic1103/"
 INPUT_DIR="/user/cruz/git/iic1103/scan-IIC1103/opt/numbers/cropped_imgs"
 #INPUT_DIR="/opt/numbers/cropped_imgs"
 OUTPUT_DIR="/user/cruz/git/iic1103/scan-IIC1103/output"
 #OUTPUT_DIR="/opt/numbers/raw_output"
-MODEL_FILE="digits_cls.pkl"
+#MODEL_FILE="digits_cls.pkl"
 OUTPUT_FILE=OUTPUT_DIR+"/output.txt"
 
 #CLEAN_BORDER=7
@@ -58,12 +65,13 @@ def loadModel():
 	print "Reading trained model ...",
 	sys.stdout.flush()
 	startTime = time.clock()
-	clf = joblib.load(MODEL_FILE)
+	#net = caffe.Net(MODEL_FILE, PRETRAINED,caffe.TEST)
+	net = caffe.Classifier(MODEL_FILE, PRETRAINED, raw_scale=255, image_dims=(28,28))
 	elapsedTime = time.clock() - startTime
 	print "{0:.3f}s".format(elapsedTime)
-	return clf
+	return net
 
-def readDigits(clf,outFile,debug=False):
+def readDigits(net,outFile,debug=False):
 	#Get list of images
 	print "Reading input images from " + INPUT_IMGS_DIR,
 	sys.stdout.flush()
@@ -99,7 +107,7 @@ def readDigits(clf,outFile,debug=False):
 				i+=1
 
 		for square in squares:
-			number,conf = readSquare(square,clf,False)
+			number,conf = readSquare(square,net,False)
 			numbers.append(number)
 			confidences.append(conf)
 
@@ -131,9 +139,9 @@ def writeNum(n):
 		return "X"
 	return str(n)
 
-def readSquare(square,clf,debug=False):
+def readSquare(square,net,debug=False):
 	h,w = square.shape[0], square.shape[1]
-	print "Reading square of "+str(h) + "x" + str(w)
+	#print "Reading square of "+str(h) + "x" + str(w)
 
 	square_gray = cv2.cvtColor(square, cv2.COLOR_BGR2GRAY)
 	square_blur = cv2.GaussianBlur(square_gray, (5, 5), 0)
@@ -176,15 +184,37 @@ def readSquare(square,clf,debug=False):
 			#Resize the roi
 			roi_scaled = cv2.resize(roi, (28,28), interpolation=cv2.INTER_AREA)
 			roi_dilated = cv2.dilate(roi_scaled, (3,3))
-			#Compute the HOG features
-			roi_hog = hog(roi_dilated, orientations=9, pixels_per_cell=(14,14), cells_per_block=(1, 1), visualise=False)
-			roi_hog_np = np.array([roi_hog], 'float64')
-			#Predict
-			number = clf.predict(roi_hog_np)[0]
-			confidences = clf.decision_function(roi_hog_np)[0]
 
-			print "Predicted: " + str(number) + ", confidence: " + str(confidences[number])
-			print str(confidences)
+			#print "Evaluating roi_dilated: " + str(roi_dilated.shape)
+			#print "Evaluating np.asarray(roi_dilated): " + str(np.asarray(roi_dilated).shape)
+
+			#print "Evaluating IMAGE: " + TEST_IMG
+			#imgcaffe = caffe.io.load_image(TEST_IMG)
+			#print "imgcaffe shape: " + str(imgcaffe.shape)
+			#imgcaffe = imgcaffe[:,:,0]
+			#print "imgcaffe shape: " + str(imgcaffe.shape)
+
+			#imgcaffe = np.expand_dims(imgcaffe,2)
+			imgcaffe = np.expand_dims(roi_dilated,2)
+			#print "imgcaffe shape: " + str(imgcaffe.shape) + ", type: " + str(type(imgcaffe.shape))
+
+			prediction = net.predict([imgcaffe], oversample=False)
+			number = np.argmax(prediction)
+			print "Prediction: " + str(prediction) + ", ---> " + str(number)
+			confidences = prediction[0]
+			#out = net.forward_all(data=np.asarray(roi_dilated))
+
+			#Compute the HOG features
+			#roi_hog = hog(roi_dilated, orientations=9, pixels_per_cell=(14,14), cells_per_block=(1, 1), visualise=False)
+			#roi_hog_np = np.array([roi_hog], 'float64')
+			
+
+			#Predict
+			#number = clf.predict(roi_hog_np)[0]
+			#confidences = clf.decision_function(roi_hog_np)[0]
+
+			#print "Predicted: " + str(number) + ", confidence: " + str(confidences[number])
+			#print str(confidences)
 
 	if debug:
 		cv2.imshow("Square", square)
@@ -201,11 +231,11 @@ def main():
 	welcome()
 
 	#Load trained model
-	clf = loadModel()
+	net = loadModel()
 
 	outputFile = open(OUTPUT_FILE, 'w')
 
-	readDigits(clf,outputFile,False)
+	readDigits(net,outputFile,False)
 
 
 
