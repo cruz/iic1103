@@ -1,3 +1,5 @@
+#Found example from: https://groups.google.com/forum/#!searchin/caffe-users/mnist/caffe-users/vEvtFafhAfM/ntTyDYhkqLAJ
+
 #import sklearn
 #from sklearn.externals import joblib
 #from sklearn import datasets
@@ -28,7 +30,7 @@ OUTPUT_DIR="/user/cruz/git/iic1103/scan-IIC1103/output"
 OUTPUT_FILE=OUTPUT_DIR+"/output.txt"
 
 #CLEAN_BORDER=7
-AREA_THRESHOLD_MIN = 200 
+AREA_THRESHOLD_MIN = 150 
 
 INPUT_IMGS_DIR=INPUT_DIR+"/test"
 
@@ -107,7 +109,7 @@ def readDigits(net,outFile,debug=False):
 				i+=1
 
 		for square in squares:
-			number,conf = readSquare(square,net,False)
+			number,conf = readSquare(square,net,debug)
 			numbers.append(number)
 			confidences.append(conf)
 
@@ -170,23 +172,28 @@ def readSquare(square,net,debug=False):
 		if debug:
 			cv2.imshow("Square", square)
 			ch = 0xFF & cv2.waitKey()
-			cv2.destroyWindow("Square")			
+			cv2.destroyWindow("Square")
 
 	for rect in rects:
 		if rect[2]*rect[3] >= AREA_THRESHOLD_MIN:
 			#Display rectangle on img
 			cv2.rectangle(square, (rect[0], rect[1]), (rect[0]+rect[2], rect[1]+rect[3]), (0,255,0), 1)
-			length = int(rect[3] * 1.6) #no idea why of this
+			#length = int(rect[3] * 1.6)
+			length = int(rect[3] * 1.2) #extract an additional border of the image
 			pt1 = max(int(rect[1] + rect[3] // 2 - length // 2), 0)
 			pt2 = max(int(rect[0] + rect[2] // 2 - length // 2), 0)
+			#print "RECT: " + str(rect), ", length: " + str(length) + ", pt1="+str(pt1) + ", pt2="+str(pt2)
+			#print "Roi coords: Rows: " + str(pt1) + "->" + str(pt1+length) + ", Cols: " + str(pt2) + "->" + str(pt2+length)
+
+			cv2.rectangle(square, (pt2, pt1), (pt2+length, pt1+length), (255,0,0), 1)
 			#Cut roi
 			roi = square_thres[pt1:pt1+length, pt2:pt2+length]
+			
+			#roi_padded = cv2.copyMakeBorder(roi, 5, 5, 5, 5, cv2.BORDER_CONSTANT)
 			#Resize the roi
 			roi_scaled = cv2.resize(roi, (28,28), interpolation=cv2.INTER_AREA)
 			roi_dilated = cv2.dilate(roi_scaled, (3,3))
 
-			#print "Evaluating roi_dilated: " + str(roi_dilated.shape)
-			#print "Evaluating np.asarray(roi_dilated): " + str(np.asarray(roi_dilated).shape)
 
 			#print "Evaluating IMAGE: " + TEST_IMG
 			#imgcaffe = caffe.io.load_image(TEST_IMG)
@@ -195,19 +202,19 @@ def readSquare(square,net,debug=False):
 			#print "imgcaffe shape: " + str(imgcaffe.shape)
 
 			#imgcaffe = np.expand_dims(imgcaffe,2)
+	#		if debug:
+	#			cv2.imshow
+
+			print "roi_dilated shape: " + str(roi_dilated.shape) + ", type: " + str(type(roi_dilated))
 			imgcaffe = np.expand_dims(roi_dilated,2)
-			#print "imgcaffe shape: " + str(imgcaffe.shape) + ", type: " + str(type(imgcaffe.shape))
+			print "imgcaffe shape: " + str(imgcaffe.shape) + ", type: " + str(type(imgcaffe))
 
 			prediction = net.predict([imgcaffe], oversample=False)
 			number = np.argmax(prediction)
 			print "Prediction: " + str(prediction) + ", ---> " + str(number)
 			confidences = prediction[0]
 			#out = net.forward_all(data=np.asarray(roi_dilated))
-
-			#Compute the HOG features
-			#roi_hog = hog(roi_dilated, orientations=9, pixels_per_cell=(14,14), cells_per_block=(1, 1), visualise=False)
-			#roi_hog_np = np.array([roi_hog], 'float64')
-			
+			#out = net.forward_all(data=imgcaffe)
 
 			#Predict
 			#number = clf.predict(roi_hog_np)[0]
@@ -218,8 +225,15 @@ def readSquare(square,net,debug=False):
 
 	if debug:
 		cv2.imshow("Square", square)
+		print "Square is " + str(square.shape)
+		cv2.imshow("roi", roi)
+		print "roi is " + str(roi.shape)
+		cv2.imshow("roi_dilated", roi_dilated)
+		print "roi_dilated is " + str(roi_dilated.shape)
 		ch = 0xFF & cv2.waitKey()
-		cv2.destroyWindow("Square")
+		#cv2.destroyWindow("Square")
+		#cv2.destroyWindow("roi")
+		#cv2.destroyWindow("roi_dilated")
 	
 	if number != -1:
 		return (number,confidences[number])
