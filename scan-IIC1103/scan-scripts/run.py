@@ -194,7 +194,6 @@ def readSquare(square,net,debug=False):
 			roi_scaled = cv2.resize(roi, (28,28), interpolation=cv2.INTER_AREA)
 			roi_dilated = cv2.dilate(roi_scaled, (3,3))
 
-
 			#print "Evaluating IMAGE: " + TEST_IMG
 			#imgcaffe = caffe.io.load_image(TEST_IMG)
 			#print "imgcaffe shape: " + str(imgcaffe.shape)
@@ -202,12 +201,10 @@ def readSquare(square,net,debug=False):
 			#print "imgcaffe shape: " + str(imgcaffe.shape)
 
 			#imgcaffe = np.expand_dims(imgcaffe,2)
-	#		if debug:
-	#			cv2.imshow
 
-			print "roi_dilated shape: " + str(roi_dilated.shape) + ", type: " + str(type(roi_dilated))
+			#print "roi_dilated shape: " + str(roi_dilated.shape) + ", type: " + str(type(roi_dilated))
 			imgcaffe = np.expand_dims(roi_dilated,2)
-			print "imgcaffe shape: " + str(imgcaffe.shape) + ", type: " + str(type(imgcaffe))
+			#print "imgcaffe shape: " + str(imgcaffe.shape) + ", type: " + str(type(imgcaffe))
 
 			prediction = net.predict([imgcaffe], oversample=False)
 			number = np.argmax(prediction)
